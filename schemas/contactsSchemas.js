@@ -4,10 +4,16 @@ export const createContactSchema = Joi.object({
     name: Joi.string().required(),
     email: Joi.string().required(),
     phone: Joi.number().required(),
+    favorite: Joi.boolean().required(),
 });
 
 export const updateContactSchema = Joi.object({
     name: Joi.string(),
     email: Joi.string(),
     phone: Joi.number(),
+    favorite: Joi.boolean(),
 }).min(1);
+
+export const favoriteContactSchema = Joi.object({
+    favorite: Joi.boolean().required(),
+}).max(1);
