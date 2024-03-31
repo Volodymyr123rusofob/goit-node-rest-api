@@ -13,3 +13,7 @@ export const updateContactSchema = Joi.object({
     phone: Joi.number(),
     favorite: Joi.boolean(),
 }).min(1);
+
+export const favoriteContactSchema = Joi.object({
+    favorite: Joi.boolean().required(),
+}).max(1);
