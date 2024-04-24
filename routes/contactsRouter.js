@@ -18,6 +18,7 @@ import validateBody from "../helpers/validateBody.js";
 
 import isValidId from "../middlewares/authenticate.js";
 import authenticate from "../middlewares/authenticate.js";
+import upload from "../middlewares/upload.js";
 
 const contactsRouter = express.Router();
 
@@ -31,6 +32,7 @@ contactsRouter.delete("/:id", isValidId, deleteContact);
 
 contactsRouter.post(
     "/",
+    upload.single("avatar"),
     validateBody(createContactSchema),
     createContact
 );

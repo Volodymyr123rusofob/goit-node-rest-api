@@ -1,13 +1,10 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
 import HttpError from "../helpers/HttpError.js";
-
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
-
 import * as authServices from "../services/authServices.js";
-
 import "dotenv/config";
+import gravatar from "gravatar";
 
 const { JWT_SECRET } = process.env;
 
@@ -17,11 +14,14 @@ export const register = ctrlWrapper(async (req, res) => {
     if (user) {
         throw HttpError(409, "Email in use");
     }
-
+    const avatarURL = gravatar.url(email, {
+        d: "identicon",
+    });
     const hashPassword = await bcrypt.hash(password, 10);
 
     const newUser = await authServices.register({
         ...req.body,
+        avatarURL,
         password: hashPassword,
     });
     if (!newUser) {
@@ -31,6 +31,7 @@ export const register = ctrlWrapper(async (req, res) => {
         user: {
             email: newUser.email,
             subscription: newUser.subscription,
+            avatarURL: newUser.avatarURL,
         },
     });
 });
@@ -51,7 +52,7 @@ export const login = ctrlWrapper(async (req, res) => {
         throw HttpError(401, "Email or password is wrong");
     }
 
-    const { _id: id } = user;
+    const { _id: id, subscription, avatarURL } = user;
 
     const payload = {
         id,
@@ -64,15 +65,16 @@ export const login = ctrlWrapper(async (req, res) => {
     res.json({
         token,
         user: {
-            email: user.email,
-            subscription: user.subscription,
+            email,
+            subscription,
+            avatarURL,
         },
     });
 });
 
 export const getCurrent = ctrlWrapper(async (req, res) => {
-    const { email, subscription } = req.user;
-    res.json({ email, subscription });
+    const { email, subscription, avatarURL } = req.user;
+    res.json({ email, subscription, avatarURL });
 });
 
 export const logout = ctrlWrapper(async (req, res) => {
