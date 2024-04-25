@@ -32,7 +32,6 @@ contactsRouter.delete("/:id", isValidId, deleteContact);
 
 contactsRouter.post(
     "/",
-    upload.single("avatar"),
     validateBody(createContactSchema),
     createContact
 );

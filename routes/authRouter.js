@@ -2,9 +2,11 @@ import express from "express";
 
 import validateBody from "../helpers/validateBody.js";
 
+import { updateAvatar } from "../controllers/authControllers.js";
 import {
     registerSchema,
     loginSchema,
+    userEmailSchema,
 } from "../schemas/usersSchemas.js";
 
 import {
@@ -12,6 +14,8 @@ import {
     register,
     logout,
     getCurrent,
+    verify,
+    resendVerify,
 } from "../controllers/authControllers.js";
 import authenticate from "../middlewares/authenticate.js";
 import upload from "../middlewares/upload.js";
@@ -21,6 +25,14 @@ authRouter.post(
     "/register",
     validateBody(registerSchema),
     register
+);
+
+authRouter.get("/verify/:verificationToken", verify);
+
+authRouter.post(
+    "/verify",
+    validateBody(userEmailSchema),
+    resendVerify
 );
 
 authRouter.post("/login", validateBody(loginSchema), login);
